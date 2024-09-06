@@ -1,0 +1,28 @@
+.statistics {
+  // Container for the statistics
+  &__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+  }
+
+  // Styles for the statistics chart
+  &__chart {
+    width: 100%;
+    height: 200px;
+    margin-bottom: 1rem;
+  }
+
+  // Styles for the statistics legend
+  &__legend {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+  }
+
+  // ... more statistics styles
+}
