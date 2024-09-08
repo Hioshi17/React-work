@@ -1,16 +1,24 @@
 :root {
-  --default-font-family: , "Helvetica Neue", Helvetica, Arial, "PingFang SC",
-    "Hiragino Sans GB", "Microsoft Yahei UI", "Microsoft Yahei",
-    "Source Han Sans CN", sans-serif;
+  --default-font-family: "Open Sans", sans-serif;
+  --background-color: #111;
+  --text-color: #fff;
+  --accent-color: #069;
+  --border-radius: 16px;
 }
 
-.main-container {
-  overflow: hidden;
-}
-
-.main-container,
-.main-container * {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: var(--default-font-family);
+  line-height: 1.5;
 }
 
 input,
@@ -18,39 +26,6 @@ select,
 textarea,
 button {
   outline: 0;
-}
-
-.main-container {
-  position: relative;
-  width: 2137px;
-  height: 1024px;
-  margin: 0 auto;
-  background: #12141b;
-  overflow: hidden;
-}
-
-.frame {
-  display: flex;
-  align-items: flex-start;
-  flex-wrap: nowrap;
-  gap: 16px;
-  position: relative;
-  width: 2073px;
-  margin: 108px 0 0 32px;
-  z-index: 11;
-}
-
-.frame-1 {
-  display: flex;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  flex-grow: 1;
-  flex-shrink: 0;
-  flex-basis: 0;
-  gap: 16px;
-  position: relative;
-  min-width: 0;
-  z-index: 12;
 }
 
 .card {
@@ -61,8 +36,14 @@ button {
   gap: 16px;
   position: relative;
   width: 332px;
-  padding: 20px 20px 20px 20px;
-  background: #1a1c23;
+  padding: 20px;
+  background-color: var(--background-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.1);
   z-index: 13;
-  border-radius: 16px;
+  transition: background-color 0.2s ease;
+}
+
+.card:hover {
+  background-color: var(--accent-color);
 }
