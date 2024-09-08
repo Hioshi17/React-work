@@ -1,0 +1,35 @@
+:root {
+  font-family: "Lato", "Open Sans", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+  background-color: #000000;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0 auto;
+  max-width: 1280px;
+  padding: 2rem;
+  font-weight: 300;
+  font-size: 18px;
+  line-height: 1.7;
+  color: #222;
+  background-color: #fff;
+}
+
+a {
+  color: #069;
+  text-decoration: none;
+  transition: all 0.15s ease-in-out;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #0056b3;
+}

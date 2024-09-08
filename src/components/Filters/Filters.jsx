@@ -1,6 +1,5 @@
 import React from "react";
-import styles from "../styles/Filters.module.scss";
-
+import styles from "./Filters.module.scss";
 const Filters = ({ onFilterChange }) => {
   const handleAgeChange = (e) => {
     onFilterChange("age", e.target.value);
@@ -35,3 +34,17 @@ const Filters = ({ onFilterChange }) => {
 };
 
 export default Filters;
+
+// import React from "react";
+// import styles from "./Filters.module.scss";
+// const Filters = () => {
+//   // Задать функционал фильтрации по возрасту и полу, если нужно
+//   return (
+//     <div className={styles.filters}>
+//       <button>Age Filter</button>
+//       <button>Gender Filter</button>
+//     </div>
+//   );
+// };
+
+// export default Filters; ( Добвлять или нет ?)

@@ -1,111 +1,71 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import UserList from "./components/UserList";
-import SearchBar from "./components/SearchBar";
-import Statistics from "./components/Statistics";
-import Filters from "./components/Filters";
-import styles from "./styles/App.module.scss";
+import { getUsers } from "./api/userService";
+import SearchBar from "./components/SearchBar/SearchBar";
+import Filters from "./components/Filters/Filters";
+import Statistics from "./components/Statistics/Statistics";
+import UserList from "./components/UserList/UserList";
+import Header from "./components/Header/Header";
+import "./styles/global.scss";
 
 const App = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [ageGroups, setAgeGroups] = useState({});
-  const [genderGroups, setGenderGroups] = useState({});
-  const [filters, setFilters] = useState({
-    age: "",
-    gender: "",
-  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null); // Добавим состояние для ошибок
 
   useEffect(() => {
-    // fetchUsers();
+    fetchUsers();
   }, []);
 
-  useEffect(() => {
-    applyFilters();
-  }, [filters, users]);
-
   const fetchUsers = async () => {
-    const response = await axios.get("https://randomuser.me/api/?results=500");
-    const usersData = response.data.results;
-    setUsers(usersData);
-    setFilteredUsers(usersData);
-    calculateStatistics(usersData);
+    setLoading(true);
+    setError(null); // Сброс ошибки перед новым запросом
+    try {
+      const fetchedUsers = await getUsers();
+      setUsers(fetchedUsers);
+      setFilteredUsers(fetchedUsers);
+    } catch (err) {
+      setError("Failed to fetch users. Please try again later.");
+    }
+    setLoading(false);
   };
 
-  const calculateStatistics = (users) => {
-    const ageGroups = users.reduce((acc, user) => {
-      const age =
-        new Date().getFullYear() - new Date(user.dob.date).getFullYear();
-      if (age < 18) acc["0-18"] = (acc["0-18"] || 0) + 1;
-      else if (age < 36) acc["18-36"] = (acc["18-36"] || 0) + 1;
-      else if (age < 54) acc["36-54"] = (acc["36-54"] || 0) + 1;
-      else acc["54+"] = (acc["54+"] || 0) + 1;
-      return acc;
-    }, {});
-
-    const genderGroups = users.reduce((acc, user) => {
-      acc[user.gender] = (acc[user.gender] || 0) + 1;
-      return acc;
-    }, {});
-
-    setAgeGroups(ageGroups);
-    setGenderGroups(genderGroups);
-  };
-
-  const handleSearch = (query) => {
-    const filtered = users.filter(
-      (user) =>
-        user.name.first.toLowerCase().includes(query.toLowerCase()) ||
-        user.name.last.toLowerCase().includes(query.toLowerCase()) ||
-        user.email.toLowerCase().includes(query.toLowerCase()) ||
-        user.phone.includes(query) ||
-        user.dob.date.includes(query) ||
-        user.location.city.toLowerCase().includes(query.toLowerCase()) ||
-        user.location.country.toLowerCase().includes(query.toLowerCase())
-    );
-    setFilteredUsers(filtered);
-  };
-
-  const handleDelete = (uuid) => {
-    const updatedUsers = users.filter((user) => user.login.uuid !== uuid);
-    setUsers(updatedUsers);
-    setFilteredUsers(updatedUsers);
-    calculateStatistics(updatedUsers);
-  };
-
-  const handleFilterChange = (type, value) => {
-    setFilters((prevFilters) => ({ ...prevFilters, [type]: value }));
-  };
-
-  const applyFilters = () => {
-    let filtered = users;
-
-    if (filters.age) {
-      const [minAge, maxAge] = filters.age.split("-").map(Number);
-      filtered = filtered.filter((user) => {
-        const age =
-          new Date().getFullYear() - new Date(user.dob.date).getFullYear();
-        return age >= minAge && age <= (maxAge || Infinity);
+  const handleSearch = (searchTerm) => {
+    if (!searchTerm) {
+      setFilteredUsers(users);
+    } else {
+      const filtered = users.filter((user) => {
+        const fullName = `${user.name.first} ${user.name.last}`.toLowerCase();
+        return (
+          fullName.includes(searchTerm.toLowerCase()) ||
+          user.email.includes(searchTerm.toLowerCase()) ||
+          user.phone.includes(searchTerm.toLowerCase())
+        );
       });
+      setFilteredUsers(filtered);
     }
+  };
 
-    if (filters.gender) {
-      filtered = filtered.filter((user) => user.gender === filters.gender);
-    }
-
-    setFilteredUsers(filtered);
+  const handleDeleteUser = (userId) => {
+    const updatedUsers = filteredUsers.filter(
+      (user) => user.login.uuid !== userId
+    );
+    setFilteredUsers(updatedUsers);
   };
 
   return (
-    <div className={styles.app}>
-      <div className={styles.header}>
-        <h1>User List</h1>
-        <button onClick={fetchUsers}>Refresh Page</button>
-      </div>
+    <div className="app">
+      <Header />
       <SearchBar onSearch={handleSearch} />
-      <Filters onFilterChange={handleFilterChange} />
-      <Statistics ageGroups={ageGroups} genderGroups={genderGroups} />
-      <UserList users={filteredUsers} onDelete={handleDelete} />
+      <Filters />
+      <Statistics users={filteredUsers} />
+      {error && <p className="error">{error}</p>} {/* Сообщение об ошибке */}
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <UserList users={filteredUsers} onDeleteUser={handleDeleteUser} />
+      )}
     </div>
   );
 };
